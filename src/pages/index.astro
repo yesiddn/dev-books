@@ -28,7 +28,8 @@ const books = await getCollection('books');
                     href={`/libro/${id}`}
                     class="mb-2 xl:mb-0 transition hover:scale-110"
                   >
-                    <img src={`/${img}`} alt={title} class="w-48 rounded" />
+              <!-- con transition:name se pueden identificar las trasiciones. el nombre debe ser unico, por ello en esta ocasion lo estamos diferenciando con el id de la collection. Luego en el elemento de la otra pagina se debe usar el mismo transition:name -->
+                    <img transition:name={`img-${id}`} src={`/${img}`} alt={title} class="w-48 rounded" />
                   </a>
 
                   <div class="flex flex-col justify-center">

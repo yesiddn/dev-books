@@ -16,7 +16,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const book = Astro.props;
-const { data } = book;
+const { id, data } = book;
 const { title, author, description, img } = data;
 
 const { Content } = await render(book);
@@ -25,7 +25,9 @@ const { Content } = await render(book);
 <Layout>
   <div class="flex gap-12">
     <aside class="flex flex-col items-center gap-4">
-      <img class="rounded w-72 h-auto" src={`/${img}`} alt={title} />
+      <a href="/" class="hover:underline opacity-70">← Volver atrás</a>
+      <!-- la transition viene de css: view-transtion-name -->
+      <img transition:name={`img-${id}`} class="rounded w-72 h-auto" src={`/${img}`} alt={title} />
     </aside>
 
     <main class="max-w-3xl">
