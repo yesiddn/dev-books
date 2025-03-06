@@ -3,6 +3,8 @@ import type { GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { render } from "astro:content";
+import { SHOW_BUY_BUTTON } from "astro:env/server";
+import AmazonLogo from "../../components/AmazonLogo.astro";
 
 export const getStaticPaths = (async () => {
   const books = await getCollection("books");
@@ -17,7 +19,7 @@ export const getStaticPaths = (async () => {
 
 const book = Astro.props;
 const { id, data } = book;
-const { title, author, description, img } = data;
+const { title, author, description, img, buy } = data;
 
 const { Content } = await render(book);
 ---
@@ -28,6 +30,21 @@ const { Content } = await render(book);
       <a href="/" class="hover:underline opacity-70">← Volver atrás</a>
       <!-- la transition viene de css: view-transtion-name -->
       <img transition:name={`img-${id}`} class="rounded w-72 h-auto" src={`/${img}`} alt={title} />
+      <span class="text-xs" id="score"></span>
+      {
+        SHOW_BUY_BUTTON && (
+        <a 
+          href={buy.spain}
+          title="Comprar libro"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-balance inline-flex gap-2 items-center bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg border border-yellow-500 transition duration-200 ease-in-out hover:scale-105 justify-center text-center"
+        >
+          Comprar en Amazon España
+          <AmazonLogo />
+        </a>
+        )
+      }
     </aside>
 
     <main class="max-w-3xl">
@@ -39,3 +56,22 @@ const { Content } = await render(book);
     </main>
   </div>
 </Layout>
+
+<!-- se pueden crear estilos para solo el archivo o globales asi: -->
+<!-- <style is:global></style> -->
+<!-- los script pueden ser en linea o normales -->
+<!-- <script is:inline></script> -->
+<script>
+  // la variable de entorno aqui viene de astro:env/client ya que la marcamos en el astro.config.mjs con un context server
+  import { SCORE_API_ENDPOINT } from "astro:env/client";
+
+  const scoreElement = document.querySelector("#score");
+
+  fetch(SCORE_API_ENDPOINT)
+    .then(res => res.text())
+    .then(score => {
+      if (scoreElement) {
+        scoreElement.textContent = `⭐ Puntuación: ${score.trim()}/5`;
+      }
+    });
+</script>

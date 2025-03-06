@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
 
+// cuando da error por no poder encontrar la coleccion, se puede usar el comando pnpm astro sync para sincronizar los datos de las colleciones (y otros)
 const books = await getCollection('books');
 ---
 
