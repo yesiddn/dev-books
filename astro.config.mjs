@@ -3,12 +3,17 @@ import { defineConfig, envField } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 
+import vercel from '@astrojs/vercel';
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
   },
-  output: 'server', // esta configuracion es para que astro se ejecute en el servidor, es decir crea un servidor de nodejs en el que se ejecuta solo las cosas que no son estaticas, como por ejemplo el componente BookScore
+
+  // esta configuracion es para que astro se ejecute en el servidor, es decir crea un servidor de nodejs en el que se ejecuta solo las cosas que no son estaticas, como por ejemplo el componente BookScore
+  output: 'server',
+
   env: {
     schema: {
       // usando envField se puede definir el tipo de dato que se espera
@@ -19,5 +24,7 @@ export default defineConfig({
       // para leer una variable de entorno en el cliente se hace diferente a las de server
       SCORE_API_ENDPOINT: envField.string({ context: 'server', access: 'public' }),
     }
-  }
+  },
+
+  adapter: vercel()
 });
