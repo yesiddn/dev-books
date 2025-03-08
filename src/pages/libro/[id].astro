@@ -5,6 +5,7 @@ import Layout from "../../layouts/Layout.astro";
 import { render } from "astro:content";
 import { SHOW_BUY_BUTTON } from "astro:env/server";
 import AmazonLogo from "../../components/AmazonLogo.astro";
+import BookScore from "../../components/BookScore.astro";
 
 export const getStaticPaths = (async () => {
   const books = await getCollection("books");
@@ -22,6 +23,8 @@ const { id, data } = book;
 const { title, author, description, img, buy } = data;
 
 const { Content } = await render(book);
+
+export const prerender = true;
 ---
 
 <Layout>
@@ -30,7 +33,16 @@ const { Content } = await render(book);
       <a href="/" class="hover:underline opacity-70">← Volver atrás</a>
       <!-- la transition viene de css: view-transtion-name -->
       <img transition:name={`img-${id}`} class="rounded w-72 h-auto" src={`/${img}`} alt={title} />
-      <span class="text-xs" id="score"></span>
+
+      <!-- con server:defer le indicamos a astro que esta parte del codigo se debe renderizar en el server -> todo lo demas es estatico menos esta parte -->
+      <!-- a esto se le llama server islands -->
+      <BookScore server:defer>
+        <!-- como el server tarda un momento en retornar el elemento y la pagina da un salto cuando incrusta  el elemento, se pueden usar fallbacks -->
+        <span class="text-xs opacity-70" id="score" slot="fallback"> <!-- el slot fallback es el contenido que se muestra mientras se carga el contenido diferido -->
+          ⭐ Puntuación: Cargando...
+        </span>
+      </BookScore>
+
       {
         SHOW_BUY_BUTTON && (
         <a 
@@ -63,15 +75,15 @@ const { Content } = await render(book);
 <!-- <script is:inline></script> -->
 <script>
   // la variable de entorno aqui viene de astro:env/client ya que la marcamos en el astro.config.mjs con un context server
-  import { SCORE_API_ENDPOINT } from "astro:env/client";
-
-  const scoreElement = document.querySelector("#score");
-
-  fetch(SCORE_API_ENDPOINT)
-    .then(res => res.text())
-    .then(score => {
-      if (scoreElement) {
-        scoreElement.textContent = `⭐ Puntuación: ${score.trim()}/5`;
-      }
-    });
+  // import { SCORE_API_ENDPOINT } from "astro:env/client";
+  //
+  // const scoreElement = document.querySelector("#score");
+  //
+  // fetch(SCORE_API_ENDPOINT)
+  //   .then(res => res.text())
+  //   .then(score => {
+  //     if (scoreElement) {
+  //       scoreElement.textContent = `⭐ Puntuación: ${score.trim()}/5`;
+  //     }
+  //   });
 </script>

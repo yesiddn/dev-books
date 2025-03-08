@@ -5,6 +5,8 @@ import Layout from '../layouts/Layout.astro';
 
 // cuando da error por no poder encontrar la coleccion, se puede usar el comando pnpm astro sync para sincronizar los datos de las colleciones (y otros)
 const books = await getCollection('books');
+
+export const prerender = true; // cuando se usa SSR, se debe usar esta propiedad para que esta pagina siga siendo estatica
 ---
 
 <Layout>
